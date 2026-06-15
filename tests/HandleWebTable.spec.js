@@ -1,60 +1,81 @@
-const {test,expect} = require('@playwright/test')
+const { test, expect } = require('@playwright/test')
 
-test('Handle table', async({page}) =>{
+test('Handle web table', async ({ page }) => {
+
     await page.goto("https://testautomationpractice.blogspot.com/")
 
     const table = await page.locator("#productTable")
 
-    // Count number of rows and columns in a table
+    // Select and validate rows and columns
 
-    const columns = await table.locator("thead tr th")
+    const columns = table.locator("thead tr th")
     console.log("Number of columns: ", await columns.count())
-    expect(await columns.count()).toBe(4)
+    await expect(await columns.count()).toBe(4)
 
-    const rows = await table.locator("tbody tr")
+    const rows = table.locator("tbody tr")
     console.log("Number of rows: ", await rows.count())
-    expect(await rows.count()).toBe(5)
+    await expect(await rows.count()).toBe(5)
 
-    await page.waitForTimeout(5000)
-
-    // select check box for product 4
+    // Select check box only for 4th row
 
     // const matchedRow = rows.filter({
-    //     has: page.locator("td"),
+    //     has: page.locator('td'),
     //     hasText: "Smartwatch"
     // })
 
     // await matchedRow.locator('input').check()
 
-    await page.waitForTimeout(5000)
+    // Select multiple checkboxes of table
 
-    // Select multiple checkbox by resuable function
-
-    // await selectProduct(rows,page,'Laptop')
-    // await selectProduct(rows,page,'Tablet')
-    // await selectProduct(rows,page,'Wireless Earbuds')
+    // await selectProduct(page,rows,'Smartphone')
+    // await selectProduct(page,rows,'Laptop')
+    // await selectProduct(page,rows,'Wireless Earbuds')
 
     // Print all product details using loop
+    // for (let i = 0; i < await rows.count(); i++) {
+        
+    //     const row = rows.nth(i)
+    //     const tds = row.locator('td')
 
-    for(let i=0;i<await rows.count();i++){
+    //     for (let j = 0; j < await tds.count()-1; j++) {
+    //        console.log(await tds.nth(j).textContent())
+    //     }
+        
+    // }
 
+    // Read data from all pages in a table
+    const pages = await page.locator('#pagination li a')
+    console.log("Number of pages in the table: ", await pages.count())
+
+    for (let p = 0; p < await pages.count(); p++) {
+        if (p>0) {
+            await pages.nth(p).click()
+        }
+        
+        for (let i = 0; i < await rows.count(); i++) {
+        
         const row = rows.nth(i)
-        const td = row.locator("td") // td is column and within td what are the data have
+        const tds = row.locator('td')
 
-        for(let j=0;j<await td.count()-1;j++){
-            console.log(await td.nth(j).textContent())
+        for (let j = 0; j < await tds.count()-1; j++) {
+           console.log(await tds.nth(j).textContent())
         }
     }
+        
+    }
 
-    
+
+    await page.waitForTimeout(5000)
 
 })
 
-async function selectProduct(rows,page,name) {
-    const matchedRows = rows.filter({
-        has: page.locator("td"),
+async function selectProduct(page, rows, name) {
+
+    const matchedRow = rows.filter({
+        has: page.locator('td'),
         hasText: name
     })
-    await matchedRows.locator("input").check()
+
+    await matchedRow.locator('input').check()
 }
 

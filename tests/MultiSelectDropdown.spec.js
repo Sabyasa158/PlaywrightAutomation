@@ -22,24 +22,7 @@ test('Handle MultiDropdown', async({page}) =>{
     await expect(content.includes('White')).toBeTruthy()
     await expect(content.includes('Black')).toBeFalsy()
 
+    
     await page.waitForTimeout(5000)
-
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
